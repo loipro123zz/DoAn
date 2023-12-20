@@ -9,10 +9,9 @@ export default function UserListScreen({ navigation }) {
     const [users, setUsers] = useState([]);
 
     const logoutUser = async () => {
-        authentication.signOut()
-            .then(() => {
-                navigation.replace('Login')
-            })
+        authentication.signOut().then(() => {
+            navigation.replace('Login')
+        })
     }
 
     const getUsers = () => {
@@ -24,36 +23,50 @@ export default function UserListScreen({ navigation }) {
                 data.push({ ...user.data() })
                 setUsers(data)
                 console.log(user.data())
-
             })
         })
     }
     useEffect(() => {
         getUsers();
+        navigation.setOptions({ headerShown: false });
     }, [])
 
 
     return (
-        <>
+        <View style={styles.container}>
             <FlatList
                 data={users}
-                key={user => user.email}
-                renderItem={({ item }) =>
+                keyExtractor={(user) => user.email}
+                renderItem={({ item }) => (
                     <ListItem
                         onPress={() => navigation.navigate('Chat', { name: item.username, uid: item.userUID })}
                         title={item.username}
                         subTitle={item.email}
                         image={item.avatarUrl}
                     />
-                }
+                )}
             />
-            <Button
-                title='Logout'
-                onPress={logoutUser}
+            <Button title="LOGOUT" onPress={logoutUser} 
+            buttonStyle={styles.logoutButton} 
+            titleStyle={styles.logoutButtonText} 
             />
-        </>
-
-    )
+        </View>
+    );
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 20,
+    },
+    logoutButton: {
+        width: 120,
+        marginTop: 20,
+        backgroundColor: 'red',
+        borderRadius: 25,
+        alignSelf: 'center',
+    },
+    logoutButtonText: {
+        fontWeight: 'bold',
+    }
+});
