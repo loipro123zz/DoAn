@@ -108,16 +108,16 @@ const styles = StyleSheet.create({
     sendButton: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginRight: 10, // Adjust the margin as needed
-        height: '100%', // Make sure it takes full height
-        backgroundColor: '#007BFF', // Change the background color to blue
-        borderRadius: 15, // Add some border radius for a rounded look
-        paddingHorizontal: 15, // Adjust the horizontal padding
-        width: 100, // Adjust the width as needed
+        marginRight: 10,
+        height: '100%',
+        backgroundColor: '#007BFF',
+        borderRadius: 15,
+        paddingHorizontal: 15,
+        width: 100,
     },
     sendButtonText: {
-        color: 'white', // Change the text color to white for better contrast
+        color: 'white',
         fontWeight: 'bold',
-        fontSize: 18, // Adjust the font size as needed
+        fontSize: 18,
     },
 });
