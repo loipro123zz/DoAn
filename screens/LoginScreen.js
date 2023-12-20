@@ -1,12 +1,10 @@
-import { View, Text, StyleSheet, SafeAreaView } from 'react-native'
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Input, Button } from 'react-native-elements';
 import { } from '../firebaseConfig'
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 
-
 const LoginScreen = ({ navigation }) => {
-
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -36,36 +34,46 @@ const LoginScreen = ({ navigation }) => {
                 // ...
             }
         });
+        navigation.setOptions({ headerShown: false });
         return unsubcribe;
     })
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
+            <Text style={styles.title}>Login to ChatApp!</Text>
 
-            <Input
-                placeholder='Enter your Email'
-                label='Email'
-                leftIcon={{ name: 'email', type: 'material' }}
-                value={email}
-                onChangeText={text => setEmail(text)}
-            />
+            <View style={styles.inputContainer}>
+                <Input
+                    placeholder='Enter your Email'
+                    label='Email'
+                    labelStyle={styles.inputLabel}
+                    leftIcon={{ name: 'email', type: 'material', marginRight: 10, marginLeft: 15, }}
+                    value={email}
+                    onChangeText={text => setEmail(text)}
+                    inputContainerStyle={styles.inputField}
+                />
 
-            <Input
-                placeholder='Enter your Password'
-                label='Password'
-                leftIcon={{ name: 'lock', type: 'material' }}
-                value={password}
-                onChangeText={text => setPassword(text)}
-                secureTextEntry
-            />
+                <Input
+                    placeholder='Enter your Password'
+                    label='Password'
+                    labelStyle={styles.inputLabel}
+                    leftIcon={{ name: 'lock', type: 'material', marginRight: 10, marginLeft: 15, }}
+                    value={password}
+                    onChangeText={text => setPassword(text)}
+                    secureTextEntry
+                    inputContainerStyle={styles.inputField}
+                />
+            </View>
 
-            <Button title='Sign in' buttonStyle={styles.button} onPress={signIn} />
-            <Button title='Register' buttonStyle={styles.button}
-                onPress={() => navigation.navigate('Register')}
-            />
-
-        </View>
-    )
+            <Button title='Login' buttonStyle={styles.button} onPress={signIn} />
+            <Text style={styles.registerText}>
+                Don't have an account yet?
+                <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                    <Text style={styles.registerLink}> Register now!</Text>
+                </TouchableOpacity>
+            </Text>
+        </SafeAreaView>
+    );
 }
 
 export default LoginScreen
@@ -76,8 +84,46 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        padding: 10,
+        padding: 20,
         alignItems: 'center',
-    }
-})
-
+        justifyContent: 'center',
+    },
+    title: {
+        fontSize: 36,
+        fontWeight: 'bold',
+        marginBottom: 30,
+    },
+    inputContainer: {
+        width: '100%',
+        marginBottom: 10,
+    },
+    inputLabel: {
+        fontSize: 20,
+        marginLeft: 10,
+        marginBottom: 5,
+    },
+    inputField: {
+        borderWidth: 1,
+        borderRadius: 50,
+        borderColor: '#000000',
+        marginBottom: 5,
+    },
+    button: {
+        width: 150,
+        marginTop: 10,
+        borderRadius: 25,
+    },
+    registerText: {
+        marginTop: 5,
+        fontSize: 16,
+        textAlign: 'center',
+    },
+    registerLink: {
+        color: 'blue',
+        fontSize: 16,
+        marginLeft: 5,
+        marginTop: 63,
+        textDecorationLine: 'underline',
+        marginBottom: -3,
+    },
+});
