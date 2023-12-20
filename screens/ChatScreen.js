@@ -1,16 +1,40 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React, { useState, useCallback, useEffect } from 'react'
-import { GiftedChat } from 'react-native-gifted-chat'
+import { GiftedChat, Bubble, Send } from 'react-native-gifted-chat'
 import { authentication } from '../firebaseConfig';
 import { addDoc, collection, serverTimestamp, doc, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
+
+const renderBubble = (props) => {
+    return (
+        <Bubble
+            {...props}
+            wrapperStyle={{
+                right: {
+                    backgroundColor: '#3ECE00',
+                },
+                left: {
+                    backgroundColor: '#E5E5EA',
+                },
+            }}
+        />
+    );
+};
+
+const renderSend = (props) => {
+    return (
+        <Send {...props}>
+            <View style={styles.sendButton}>
+                <Text style={styles.sendButtonText}>Send</Text>
+            </View>
+        </Send>
+    );
+};
 
 export default function ChatScreen({ route }) {
     const uid = route.params.uid
     const [messages, setMessages] = useState([]);
     const currentUser = authentication?.currentUser?.uid;
-
-
 
     useEffect(() => {
         const chatId = uid > currentUser ? `${uid + '-' + currentUser}` : `${currentUser + '-' + uid}`;
@@ -30,11 +54,8 @@ export default function ChatScreen({ route }) {
                         createdAt: new Date()
                     }
                 }
-
-
             })
             setMessages(allMsg)
-
         })
 
         return () => {
@@ -51,25 +72,52 @@ export default function ChatScreen({ route }) {
         }
         setMessages(previousMessages => GiftedChat.append(previousMessages, myMsg))
         const chatId = uid > currentUser ? `${uid + '-' + currentUser}` : `${currentUser + '-' + uid}`;
-
-
         const docref = doc(db, 'chatrooms', chatId);
         const colRef = collection(docref, 'messages');
         const chatSnap = addDoc(colRef, {
             ...myMsg,
             createdAt: serverTimestamp(),
         })
-
     }, [])
+
     return (
-        <GiftedChat
-            messages={messages}
-            onSend={text => onSend(text)}
-            user={{
-                _id: currentUser,
-            }}
-        />
-    )
+        <View style={styles.container}>
+            <GiftedChat
+                messages={messages}
+                onSend={text => onSend(text)}
+                user={{
+                    _id: currentUser,
+                }}
+                containerStyle={styles.chatContainer}
+                renderBubble={renderBubble}
+                renderSend={renderSend}
+            />
+        </View>
+    );
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#f0f0f0',
+    },
+    chatContainer: {
+        flex: 1,
+        marginBottom: 0,
+    },
+    sendButton: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 10, // Adjust the margin as needed
+        height: '100%', // Make sure it takes full height
+        backgroundColor: '#007BFF', // Change the background color to blue
+        borderRadius: 15, // Add some border radius for a rounded look
+        paddingHorizontal: 15, // Adjust the horizontal padding
+        width: 100, // Adjust the width as needed
+    },
+    sendButtonText: {
+        color: 'white', // Change the text color to white for better contrast
+        fontWeight: 'bold',
+        fontSize: 18, // Adjust the font size as needed
+    },
+});
