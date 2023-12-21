@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Input, Button } from 'react-native-elements';
 import { } from '../firebaseConfig'
@@ -40,6 +40,10 @@ const LoginScreen = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.container}>
+            <Image
+                source={{ uri: 'https://pics.freeicons.io/uploads/icons/png/1165514541601363739-512.png' }}
+                style={styles.logo}
+            />
             <Text style={styles.title}>Login to ChatApp!</Text>
 
             <View style={styles.inputContainer}>
@@ -125,5 +129,11 @@ const styles = StyleSheet.create({
         marginTop: 63,
         textDecorationLine: 'underline',
         marginBottom: -3,
+    },
+    logo: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        marginBottom: 20,
     },
 });
