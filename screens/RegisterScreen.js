@@ -25,9 +25,9 @@ const RegisterScreen = ({ navigation }) => {
                 email
             });
 
-            console.log('Successful registration');
+            alert('Successful registration');
         } catch (error) {
-            console.error('Error during registration:', error);
+            alert('Invalid Email or Password')
         }
     };
 

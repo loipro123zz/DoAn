@@ -35,7 +35,7 @@ const RecentChats = ({ currentUserId }) => {
     }, [firestore, currentUserId]);
 
     const handleChatPress = (userId, userName) => {
-        // You can navigate to the chat screen with the selected user
+
         navigation.navigate('ChatScreen', { userId, userName });
     };
 

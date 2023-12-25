@@ -1,123 +1,138 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React, { useState, useCallback, useEffect } from 'react'
-import { GiftedChat, Bubble, Send } from 'react-native-gifted-chat'
+import { StyleSheet, Text, View, Platform } from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react';
+import { GiftedChat, InputToolbar, Composer } from 'react-native-gifted-chat';
+import { Icon } from 'react-native-elements';
 import { authentication } from '../firebaseConfig';
-import { addDoc, collection, serverTimestamp, doc, onSnapshot, query, orderBy } from 'firebase/firestore';
+import {
+    addDoc,
+    collection,
+    serverTimestamp,
+    doc,
+    onSnapshot,
+    query,
+    orderBy,
+} from 'firebase/firestore';
 import { db } from '../firebaseConfig';
-
-const renderBubble = (props) => {
-    return (
-        <Bubble
-            {...props}
-            wrapperStyle={{
-                right: {
-                    backgroundColor: '#3ECE00',
-                },
-                left: {
-                    backgroundColor: '#E5E5EA',
-                },
-            }}
-        />
-    );
-};
-
-const renderSend = (props) => {
-    return (
-        <Send {...props}>
-            <View style={styles.sendButton}>
-                <Text style={styles.sendButtonText}>Send</Text>
-            </View>
-        </Send>
-    );
-};
+import * as ImagePicker from 'expo-image-picker';
 
 export default function ChatScreen({ route }) {
-    const uid = route.params.uid
+    const uid = route.params.uid;
     const [messages, setMessages] = useState([]);
     const currentUser = authentication?.currentUser?.uid;
 
     useEffect(() => {
-        const chatId = uid > currentUser ? `${uid + '-' + currentUser}` : `${currentUser + '-' + uid}`;
+        const chatId =
+            uid > currentUser ? `${uid + '-' + currentUser}` : `${currentUser + '-' + uid}`;
         const docref = doc(db, 'chatrooms', chatId);
         const colRef = collection(docref, 'messages');
-        const q = query(colRef, orderBy('createdAt', "desc"));
+        const q = query(colRef, orderBy('createdAt', 'desc'));
         const unsubcribe = onSnapshot(q, (onSnap) => {
-            const allMsg = onSnap.docs.map(mes => {
+            const allMsg = onSnap.docs.map((mes) => {
                 if (mes.data().createdAt) {
                     return {
                         ...mes.data(),
-                        createdAt: mes.data().createdAt.toDate()
-                    }
+                        createdAt: mes.data().createdAt.toDate(),
+                    };
                 } else {
                     return {
                         ...mes.data(),
-                        createdAt: new Date()
-                    }
+                        createdAt: new Date(),
+                    };
                 }
-            })
-            setMessages(allMsg)
-        })
+            });
+            setMessages(allMsg);
+        });
 
         return () => {
-            unsubcribe()
-        }
-    }, [])
+            unsubcribe();
+        };
+    }, []);
 
-    const onSend = useCallback((messagesArray) => {
+    const onSend = useCallback(async (messagesArray) => {
         const msg = messagesArray[0];
         const myMsg = {
             ...msg,
             sentBy: currentUser,
-            sentTo: uid
+            sentTo: uid,
+        };
+
+        if (msg.image) {
+            const imageUri = msg.image;
+            myMsg.image = imageUri;
         }
-        setMessages(previousMessages => GiftedChat.append(previousMessages, myMsg))
-        const chatId = uid > currentUser ? `${uid + '-' + currentUser}` : `${currentUser + '-' + uid}`;
+
+        setMessages((previousMessages) =>
+            GiftedChat.append(previousMessages, myMsg)
+        );
+
+        const chatId =
+            uid > currentUser ? `${uid + '-' + currentUser}` : `${currentUser + '-' + uid}`;
+
         const docref = doc(db, 'chatrooms', chatId);
         const colRef = collection(docref, 'messages');
-        const chatSnap = addDoc(colRef, {
+        const chatSnap = await addDoc(colRef, {
             ...myMsg,
             createdAt: serverTimestamp(),
-        })
-    }, [])
+        });
+    }, []);
+
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: false,
+            aspect: [4, 3],
+            quality: 0.1,
+        });
+
+        if (!result.canceled) {
+            // Sử dụng "canceled" thay vì "cancelled"
+            const imageUri = result.assets ? result.assets[0].uri : result.uri;
+
+            const imageMessage = {
+                _id: new Date().getTime(),
+                text: '',
+                image: imageUri,
+                createdAt: new Date(),
+                user: {
+                    _id: currentUser,
+                },
+            };
+
+            onSend([imageMessage]);
+        }
+    };
 
     return (
-        <View style={styles.container}>
-            <GiftedChat
-                messages={messages}
-                onSend={text => onSend(text)}
-                user={{
-                    _id: currentUser,
-                }}
-                containerStyle={styles.chatContainer}
-                renderBubble={renderBubble}
-                renderSend={renderSend}
-            />
-        </View>
+        <GiftedChat
+            messages={messages}
+            onSend={(text) => onSend(text)}
+            user={{
+                _id: currentUser,
+            }}
+            renderInputToolbar={(props) => (
+                <InputToolbar {...props} containerStyle={styles.inputToolbar} />
+            )}
+            renderComposer={(props) => (
+                <Composer
+                    {...props}
+                    placeholder="Type a message..."
+                    textInputStyle={styles.textInput}
+                />
+            )}
+            renderActions={() => (
+                <Icon name="image" size={30} color="#007AFF" onPress={pickImage} />
+            )}
+        />
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#f0f0f0',
+    inputToolbar: {
+        borderTopWidth: 1,
+        borderTopColor: '#E8E8E8',
+        backgroundColor: 'white',
     },
-    chatContainer: {
-        flex: 1,
-        marginBottom: 0,
-    },
-    sendButton: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 10,
-        height: '100%',
-        backgroundColor: '#007BFF',
-        borderRadius: 15,
-        paddingHorizontal: 15,
-        width: 100,
-    },
-    sendButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: 18,
+    textInput: {
+        color: 'black',
     },
 });
