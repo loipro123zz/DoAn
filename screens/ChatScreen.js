@@ -85,7 +85,7 @@ export default function ChatScreen({ route }) {
         });
 
         if (!result.canceled) {
-            // Sử dụng "canceled" thay vì "cancelled"
+
             const imageUri = result.assets ? result.assets[0].uri : result.uri;
 
             const imageMessage = {
