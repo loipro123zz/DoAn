@@ -20,7 +20,7 @@ const RegisterScreen = ({ navigation }) => {
             await setDoc(docRef, {
                 avatarUrl: avatar ? avatar : 'https://thumbs.dreamstime.com/b/businessman-avatar-line-icon-vector-illustration-design-79327237.jpg',
                 username,
-                password, // Note: storing password in plaintext is not recommended for security reasons.
+                password,
                 userUID,
                 email
             });
