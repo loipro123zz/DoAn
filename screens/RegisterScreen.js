@@ -24,7 +24,13 @@ const RegisterScreen = ({ navigation }) => {
                 userUID,
                 email
             });
+            await updateProfile(user, {
+                photoURL: avatar ? avatar : 'https://thumbs.dreamstime.com/b/businessman-avatar-line-icon-vector-illustration-design-79327237.jpg',
+            });
 
+            // Log để kiểm tra
+            console.log('Successful registration');
+            console.log('User photoURL:', user.photoURL);
             alert('Successful registration');
         } catch (error) {
             alert('Invalid Email or Password')
