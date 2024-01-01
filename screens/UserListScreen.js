@@ -43,7 +43,7 @@ export default function UserListScreen({ navigation }) {
     );
 
     return (
-        <>
+        <View style={styles.container}>
             <SearchBar
                 placeholder="Search by name or email"
                 onChangeText={handleSearch}
@@ -63,12 +63,17 @@ export default function UserListScreen({ navigation }) {
                         image={item.avatarUrl}
                     />
                 }
+                style={styles.flatList}
             />
-        </>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+    },
     searchContainer: {
         backgroundColor: 'transparent',
         borderBottomColor: 'transparent',
@@ -76,6 +81,9 @@ const styles = StyleSheet.create({
     },
     searchInputContainer: {
         backgroundColor: '#e1e1e1',
-        borderRadius: 10,
+        borderRadius: 30,
+    },
+    flatList: {
+        marginVertical: 10,
     },
 });
