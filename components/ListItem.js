@@ -1,9 +1,11 @@
-import { Image, StyleSheet, View, TouchableWithoutFeedback } from 'react-native';
+// ListItem.js
+
 import React from 'react';
+import { Image, StyleSheet, View, TouchableWithoutFeedback } from 'react-native';
 import { AppText } from './AppText';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-export function ListItem({ title, subTitle, image, ImageComponent, onPress }) {
+export function ListItem({ title, subTitle, image, online, onPress }) {
     return (
         <TouchableWithoutFeedback
             underlayColor='#eee'
@@ -14,6 +16,10 @@ export function ListItem({ title, subTitle, image, ImageComponent, onPress }) {
                 <View style={styles.textContainer}>
                     <AppText inputText={title} stylesLing={styles.name} numberOfLines={1} />
                     {subTitle && <AppText inputText={subTitle} stylesLing={styles.listing} numberOfLines={2} />}
+                    <View style={styles.statusContainer}>
+                        <View style={[styles.status, { backgroundColor: online ? 'green' : 'red' }]} />
+                        <AppText inputText={online ? "Online" : "Offline"} stylesLing={online ? styles.onlineText : styles.offlineText} />
+                    </View>
                 </View>
                 <MaterialCommunityIcons name='chevron-right' size={24} style={styles.chevron} />
             </View>
@@ -57,6 +63,25 @@ const styles = StyleSheet.create({
     },
     chevron: {
         color: '#7f7f7f',
+    },
+    statusContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 5,
+    },
+    status: {
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        marginRight: 5,
+    },
+    onlineText: {
+        color: 'green',
+        fontSize: 14,
+    },
+    offlineText: {
+        color: 'red',
+        fontSize: 14,
     },
 });
 
