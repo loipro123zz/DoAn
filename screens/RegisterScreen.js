@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, SafeAreaView, TouchableOpacity, Text } from 'react-native';
 import { Input, Button } from 'react-native-elements';
-import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { authentication } from '../firebaseConfig';
 
@@ -13,82 +13,127 @@ const RegisterScreen = ({ navigation }) => {
 
     const registerUser = async () => {
         try {
-            const auth = getAuth();
-            const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredentials.user;
-            const userUID = user.uid;
+            const userCredentials = await createUserWithEmailAndPassword(authentication, email, password);
+            const userUID = userCredentials.user.uid;
             const docRef = doc(getFirestore(), 'users', userUID);
 
             await setDoc(docRef, {
                 avatarUrl: avatar ? avatar : 'https://thumbs.dreamstime.com/b/businessman-avatar-line-icon-vector-illustration-design-79327237.jpg',
                 username,
+                password,
                 userUID,
                 email
             });
 
-            // Cập nhật photoURL trong Firebase Authentication
-            await updateProfile(user, {
-                photoURL: avatar ? avatar : 'https://thumbs.dreamstime.com/b/businessman-avatar-line-icon-vector-illustration-design-79327237.jpg',
-            });
-
-            // Log để kiểm tra
-            console.log('Successful registration');
-            console.log('User photoURL:', user.photoURL);
+            alert('Successful registration');
         } catch (error) {
-            console.error('Error during registration:', error);
+            alert('Invalid Email or Password')
         }
     };
 
+    useEffect(() => {
+        navigation.setOptions({ headerShown: false });
+    }, []);
+
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
+            <Text style={styles.title}>Create an account today!</Text>
+
             <Input
                 placeholder='Enter your Name'
-                label='username'
-                leftIcon={{ name: 'people', type: 'material' }}
+                label='Username'
+                labelStyle={styles.inputLabel}
+                leftIcon={{ name: 'people', type: 'material', marginRight: 10, marginLeft: 15 }}
                 value={username}
                 onChangeText={text => setUsername(text)}
+                inputContainerStyle={styles.inputField}
             />
 
             <Input
                 placeholder='Enter your Email'
                 label='Email'
-                leftIcon={{ name: 'email', type: 'material' }}
+                labelStyle={styles.inputLabel}
+                leftIcon={{ name: 'email', type: 'material', marginRight: 10, marginLeft: 15 }}
                 value={email}
                 onChangeText={text => setEmail(text)}
+                inputContainerStyle={styles.inputField}
             />
 
             <Input
                 placeholder='Enter your Password'
                 label='Password'
-                leftIcon={{ name: 'lock', type: 'material' }}
+                labelStyle={styles.inputLabel}
+                leftIcon={{ name: 'lock', type: 'material', marginRight: 10, marginLeft: 15 }}
                 value={password}
                 onChangeText={text => setPassword(text)}
                 secureTextEntry
+                inputContainerStyle={styles.inputField}
             />
 
             <Input
                 placeholder='Enter your Image URL'
                 label='Avatar'
-                leftIcon={{ name: 'link', type: 'material' }}
+                labelStyle={styles.inputLabel}
+                leftIcon={{ name: 'link', type: 'material', marginRight: 10, marginLeft: 15 }}
                 value={avatar}
                 onChangeText={text => setAvatar(text)}
+                inputContainerStyle={styles.inputField}
             />
 
             <Button title='Register' buttonStyle={styles.button} onPress={registerUser} />
-        </View>
+
+            <Text style={styles.loginText}>
+                Already have an account?
+                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                    <Text style={styles.loginLink}> Login now!</Text>
+                </TouchableOpacity>
+            </Text>
+        </SafeAreaView>
     );
 };
+
+export default RegisterScreen;
 
 const styles = StyleSheet.create({
     button: {
         width: 200,
         marginTop: 10,
+        borderRadius: 25,
     },
     container: {
         flex: 1,
-        padding: 10,
+        padding: 20,
         alignItems: 'center',
+        justifyContent: 'center',
+    },
+    title: {
+        fontSize: 36,
+        fontWeight: 'bold',
+        marginBottom: 30,
+        textAlign: 'center',
+    },
+    inputLabel: {
+        fontSize: 20,
+        marginLeft: 10,
+        marginBottom: 5,
+    },
+    inputField: {
+        borderWidth: 1,
+        borderRadius: 50,
+        borderColor: '#000000',
+        marginBottom: 10,
+    },
+    loginText: {
+        marginTop: 5,
+        fontSize: 16,
+        textAlign: 'center',
+    },
+    loginLink: {
+        color: 'blue',
+        fontSize: 16,
+        marginLeft: 5,
+        marginTop: 63,
+        textDecorationLine: 'underline',
+        marginBottom: -3,
     },
 });
-
-export default RegisterScreen;
