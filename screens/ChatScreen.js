@@ -1,7 +1,7 @@
 // ChatScreen.js
 import React, { useState, useCallback, useEffect } from 'react';
 import { StyleSheet, View, Image, TouchableOpacity, Text } from 'react-native';
-import { GiftedChat, InputToolbar, Composer } from 'react-native-gifted-chat';
+import { GiftedChat, InputToolbar, Composer, Bubble } from 'react-native-gifted-chat';
 import { Icon } from 'react-native-elements';
 import { authentication } from '../firebaseConfig';
 import {
@@ -82,7 +82,7 @@ const ChatScreen = ({ route, navigation }) => {
                             >
                                 <Image
                                     source={{ uri: userData.avatarUrl }}
-                                    style={{ width: 40, height: 40, borderRadius: 20, marginLeft: 10 }}
+                                    style={{ width: 40, height: 40, borderRadius: 20, marginLeft: 10, borderWidth: 1, borderColor: 'black' }}
                                 />
                             </TouchableOpacity>
                         </View>
@@ -177,6 +177,27 @@ const ChatScreen = ({ route, navigation }) => {
                             <>
                                 <Icon name="image" size={30} color="#007AFF" onPress={pickImage} />
                             </>
+                        )}
+                        renderBubble={(props) => (
+                            <Bubble
+                                {...props}
+                                textStyle={{
+                                    right: {
+                                        color: 'white',
+                                    },
+                                    left: {
+                                        color: 'black',
+                                    },
+                                }}
+                                wrapperStyle={{
+                                    left: {
+                                        backgroundColor: '#FFFFFF',
+                                    },
+                                    right: {
+                                        backgroundColor: '#1CC3E8',
+                                    },
+                                }}
+                            />
                         )}
                     />
                 )}
