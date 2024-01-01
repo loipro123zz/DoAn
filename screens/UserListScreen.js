@@ -9,13 +9,6 @@ export default function UserListScreen({ navigation }) {
     const [users, setUsers] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
 
-    const logoutUser = async () => {
-        authentication.signOut()
-            .then(() => {
-                navigation.replace('Login');
-            });
-    }
-
     const getUsers = () => {
         const docsRef = collection(db, 'users');
         const q = query(docsRef, where('userUID', '!=', authentication?.currentUser?.uid));
@@ -70,10 +63,6 @@ export default function UserListScreen({ navigation }) {
                         image={item.avatarUrl}
                     />
                 }
-            />
-            <Button
-                title='Logout'
-                onPress={logoutUser}
             />
         </>
     );

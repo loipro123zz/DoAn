@@ -1,4 +1,4 @@
-
+import { Button } from 'react-native-elements';
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import { getAuth } from 'firebase/auth';
@@ -6,6 +6,12 @@ import { getFirestore, doc, getDoc } from 'firebase/firestore';
 
 const ProfileScreen = () => {
     const [userProfile, setUserProfile] = useState(null);
+    const logoutUser = async () => {
+        authentication.signOut()
+            .then(() => {
+                navigation.replace('Login');
+            });
+    }
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -39,6 +45,7 @@ const ProfileScreen = () => {
                     <Text style={styles.text}>Email: {userProfile.email}</Text>
                 </>
             )}
+            <Button title="Logout" onPress={logoutUser} />
         </View>
     );
 };
