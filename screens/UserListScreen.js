@@ -9,6 +9,13 @@ export default function UserListScreen({ navigation }) {
     const [users, setUsers] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
 
+    const logoutUser = async () => {
+        authentication.signOut()
+            .then(() => {
+                navigation.replace('Login');
+            });
+    }
+
     const getUsers = () => {
         const docsRef = collection(db, 'users');
         const q = query(docsRef, where('userUID', '!=', authentication?.currentUser?.uid));
@@ -43,7 +50,7 @@ export default function UserListScreen({ navigation }) {
     );
 
     return (
-        <View style={styles.container}>
+        <>
             <SearchBar
                 placeholder="Search by name or email"
                 onChangeText={handleSearch}
@@ -63,17 +70,12 @@ export default function UserListScreen({ navigation }) {
                         image={item.avatarUrl}
                     />
                 }
-                style={styles.flatList}
             />
-        </View>
+        </>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-    },
     searchContainer: {
         backgroundColor: 'transparent',
         borderBottomColor: 'transparent',
@@ -81,9 +83,6 @@ const styles = StyleSheet.create({
     },
     searchInputContainer: {
         backgroundColor: '#e1e1e1',
-        borderRadius: 30,
-    },
-    flatList: {
-        marginVertical: 10,
+        borderRadius: 10,
     },
 });
