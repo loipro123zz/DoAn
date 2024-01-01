@@ -218,6 +218,7 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderTopColor: '#E8E8E8',
         backgroundColor: 'white',
+        paddingBottom: 10,
     },
     textInput: {
         color: 'black',
