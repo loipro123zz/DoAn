@@ -45,7 +45,14 @@ const ProfileScreen = () => {
                     <Text style={styles.text}>Email: {userProfile.email}</Text>
                 </>
             )}
-            <Button title="Logout" onPress={logoutUser} />
+            <View style={styles.logoutButtonContainer}>
+                <Button 
+                    title="Logout" 
+                    onPress={logoutUser} 
+                    buttonStyle={styles.logoutButton}
+                    titleStyle={styles.logoutButtonText}
+                />
+            </View>
         </View>
     );
 };
@@ -66,6 +73,18 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 10,
     },
+    logoutButtonContainer: {
+        marginTop: 380,
+    },
+    logoutButton: {
+        backgroundColor: 'red',
+        borderRadius: 30,
+        width: 150,
+    },
+    logoutButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    }
 });
 
 export default ProfileScreen;
