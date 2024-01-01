@@ -174,9 +174,9 @@ const ChatScreen = ({ route, navigation }) => {
                             />
                         )}
                         renderActions={() => (
-                            <>
-                                <Icon name="image" size={30} color="#007AFF" onPress={pickImage} />
-                            </>
+                            <View style={styles.imageIconContainer}>
+                                <Icon name="image" style={styles.imageIcon} onPress={pickImage} />
+                            </View>
                         )}
                         renderBubble={(props) => (
                             <Bubble
@@ -221,6 +221,7 @@ const styles = StyleSheet.create({
     },
     textInput: {
         color: 'black',
+        minHeight: 50,
     },
     onlineIndicator: {
         width: 10,
@@ -236,6 +237,22 @@ const styles = StyleSheet.create({
         backgroundColor: 'gray',
         marginLeft: 5,
     },
+    imageIconContainer: {
+        marginLeft: 20,
+        marginBottom: 20,
+        width: 40,
+        height: 40,
+        borderRadius: 30,
+        backgroundColor: '#1CC3E8',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginHorizontal: 5,
+    },
+    imageIcon: {
+        fontSize: 50,
+        color: 'white',
+    },
+    
 });
 
 export default ChatScreen;
