@@ -83,6 +83,6 @@ const styles = StyleSheet.create({
     },
     searchInputContainer: {
         backgroundColor: '#e1e1e1',
-        borderRadius: 10,
+        borderRadius: 30,
     },
 });
