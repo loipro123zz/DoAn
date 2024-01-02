@@ -7,7 +7,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "https://pics.freeicons.io/uploads/icons/png/1165514541601363739-512.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
