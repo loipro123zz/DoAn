@@ -1,7 +1,7 @@
 // ChatScreen.js
 import React, { useState, useCallback, useEffect } from 'react';
 import { StyleSheet, View, Image, TouchableOpacity, Text } from 'react-native';
-import { GiftedChat, InputToolbar, Composer } from 'react-native-gifted-chat';
+import { GiftedChat, InputToolbar, Composer, Bubble } from 'react-native-gifted-chat';
 import { Icon } from 'react-native-elements';
 import { authentication } from '../firebaseConfig';
 import {
@@ -82,7 +82,7 @@ const ChatScreen = ({ route, navigation }) => {
                             >
                                 <Image
                                     source={{ uri: userData.avatarUrl }}
-                                    style={{ width: 40, height: 40, borderRadius: 20, marginLeft: 10 }}
+                                    style={{ width: 40, height: 40, borderRadius: 20, marginLeft: 10, borderWidth: 1, borderColor: 'black' }}
                                 />
                             </TouchableOpacity>
                         </View>
@@ -174,9 +174,30 @@ const ChatScreen = ({ route, navigation }) => {
                             />
                         )}
                         renderActions={() => (
-                            <>
-                                <Icon name="image" size={30} color="#007AFF" onPress={pickImage} />
-                            </>
+                            <View style={styles.imageIconContainer}>
+                                <Icon name="image" style={styles.imageIcon} onPress={pickImage} />
+                            </View>
+                        )}
+                        renderBubble={(props) => (
+                            <Bubble
+                                {...props}
+                                textStyle={{
+                                    right: {
+                                        color: 'white',
+                                    },
+                                    left: {
+                                        color: 'black',
+                                    },
+                                }}
+                                wrapperStyle={{
+                                    left: {
+                                        backgroundColor: '#FFFFFF',
+                                    },
+                                    right: {
+                                        backgroundColor: '#1CC3E8',
+                                    },
+                                }}
+                            />
                         )}
                     />
                 )}
@@ -197,9 +218,11 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderTopColor: '#E8E8E8',
         backgroundColor: 'white',
+        paddingBottom: 10,
     },
     textInput: {
         color: 'black',
+        minHeight: 50,
     },
     onlineIndicator: {
         width: 10,
@@ -215,6 +238,22 @@ const styles = StyleSheet.create({
         backgroundColor: 'gray',
         marginLeft: 5,
     },
+    imageIconContainer: {
+        marginLeft: 20,
+        marginBottom: 20,
+        width: 40,
+        height: 40,
+        borderRadius: 30,
+        backgroundColor: '#1CC3E8',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginHorizontal: 5,
+    },
+    imageIcon: {
+        fontSize: 50,
+        color: 'white',
+    },
+    
 });
 
 export default ChatScreen;

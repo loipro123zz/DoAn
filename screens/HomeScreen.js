@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProfileScreen from './ProfileScreen'
@@ -6,7 +6,11 @@ import UserListScreen from './UserListScreen';
 
 const Tab = createBottomTabNavigator();
 
-const HomeScreen = () => {
+const HomeScreen = ( {navigation} ) => {
+    useEffect(() => {
+        navigation.setOptions({ headerShown: false });
+    }, []);
+
     return (
         <Tab.Navigator>
             <Tab.Screen
@@ -22,7 +26,7 @@ const HomeScreen = () => {
             <Tab.Screen
                 name="Profile"
                 component={ProfileScreen}
-                initialParams={{ screenName: 'Notifications' }}
+                initialParams={{ screenName: 'Profile' }}
                 options={{
                     tabBarIcon: ({ color, size }) => (
                         <Icon name="face" color={color} size={size} />

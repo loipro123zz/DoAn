@@ -34,6 +34,8 @@ const styles = StyleSheet.create({
         width: 150,
         height: 150,
         borderRadius: 75,
+        borderWidth: 2,
+        borderColor: 'black',
         marginBottom: 20,
     },
     username: {
@@ -52,7 +54,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#007AFF',
         padding: 10,
-        borderRadius: 5,
+        borderRadius: 30,
     },
     goBackButtonText: {
         color: 'white',
