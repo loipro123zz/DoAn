@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, ImageBackground } from 'react-native';
-import { getAuth, signOut, updateProfile } from 'firebase/auth';
+import { getAuth, signOut } from 'firebase/auth';
 import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
 import * as ImagePicker from 'expo-image-picker';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { FontAwesome } from '@expo/vector-icons';
 
 const ProfileScreen = ({ navigation }) => {
@@ -10,6 +11,7 @@ const ProfileScreen = ({ navigation }) => {
     const [editedUsername, setEditedUsername] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const [newAvatar, setNewAvatar] = useState(null);
+    const [imageURL, setImageURL] = useState(null);
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -25,6 +27,7 @@ const ProfileScreen = ({ navigation }) => {
                     if (docSnap.exists()) {
                         setUserProfile(docSnap.data());
                         setEditedUsername(docSnap.data().username);
+                        setImageURL(docSnap.data().avatarUrl);
                     }
                 } catch (error) {
                     console.error('Error fetching user profile:', error);
@@ -107,18 +110,22 @@ const ProfileScreen = ({ navigation }) => {
 
         if (user && newAvatar) {
             const userUID = user.uid;
-            const docRef = doc(getFirestore(), 'users', userUID);
+            const storage = getStorage();
 
-            try {
-                await updateDoc(docRef, { avatarUrl: newAvatar });
-                setUserProfile({ ...userProfile, avatarUrl: newAvatar });
-                alert('Avatar updated successfully!');
-            } catch (error) {
-                console.error('Error updating avatar:', error);
-                alert('Error updating avatar. Please try again.');
-            } finally {
-                setNewAvatar(null);
-            }
+            // Lưu trữ phiên bản hình ảnh dưới dạng JPG
+            const jpegStorageRef = ref(storage, `avatars/${userUID}_jpg`);
+            await uploadBytes(jpegStorageRef, await fetch(newAvatar).then((response) => response.blob()), { contentType: 'image/jpg' });
+            const jpegDownloadURL = await getDownloadURL(jpegStorageRef);
+
+            // Cập nhật URL trong Firestore
+            const docRef = doc(getFirestore(), 'users', userUID);
+            await updateDoc(docRef, { avatarUrl: jpegDownloadURL });
+
+            // Cập nhật state và thông báo thành công
+            setUserProfile({ ...userProfile, avatarUrl: jpegDownloadURL });
+            setImageURL(jpegDownloadURL);
+            alert('Avatar updated successfully!');
+            setNewAvatar(null);
         }
     }
 
@@ -131,7 +138,7 @@ const ProfileScreen = ({ navigation }) => {
                 {userProfile && (
                     <>
                         <View style={styles.infoContainer}>
-                            <Image source={{ uri: newAvatar || userProfile.avatarUrl }} style={styles.avatar} />
+                            <Image source={{ uri: imageURL }} style={styles.avatar} />
                             <View style={styles.nameContainer}>
                                 <Text style={styles.name}>{userProfile.username}</Text>
                                 <TouchableOpacity onPress={handleEditIconPress}>
@@ -168,7 +175,6 @@ const ProfileScreen = ({ navigation }) => {
                                         <FontAwesome name="image" size={20} color="white" style={styles.buttonIcon} />
                                     </TouchableOpacity>
 
-
                                     <View style={styles.buttonGap} />
 
                                     {newAvatar && (
@@ -190,7 +196,6 @@ const ProfileScreen = ({ navigation }) => {
                                             </TouchableOpacity>
                                         </View>
                                     )}
-
 
                                     <View style={styles.buttonGap} />
 
