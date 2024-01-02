@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, View, ImageBackground } from 'react-native';
 import { collection, onSnapshot, where, query, updateDoc, doc } from 'firebase/firestore';
 import { authentication, db } from '../firebaseConfig';
 import { ListItem } from '../components/ListItem';
@@ -50,39 +50,49 @@ export default function UserListScreen({ navigation }) {
     );
 
     return (
-        <>
-            <SearchBar
-                placeholder="Search by name or email"
-                onChangeText={handleSearch}
-                value={searchQuery}
-                containerStyle={styles.searchContainer}
-                inputContainerStyle={styles.searchInputContainer}
-            />
-            <FlatList
-                data={filteredUsers}
-                keyExtractor={(item) => item.email}
-                renderItem={({ item }) =>
-                    <ListItem
-                        onPress={() => navigation.navigate('Chat', { name: item.username, uid: item.userUID })}
-                        title={item.username}
-                        subTitle={item.email}
-                        online={item.online}
-                        image={item.avatarUrl}
-                    />
-                }
-            />
-        </>
+        <ImageBackground
+            source={{ uri: 'https://files.123freevectors.com/wp-content/original/154027-abstract-blue-and-white-background-design.jpg' }}
+            style={styles.backgroundImage}
+        >
+            <>
+                <SearchBar
+                    placeholder="Search by name or email"
+                    onChangeText={handleSearch}
+                    value={searchQuery}
+                    containerStyle={styles.searchContainer}
+                    inputContainerStyle={styles.searchInputContainer}
+                />
+                <FlatList
+                    data={filteredUsers}
+                    keyExtractor={(item) => item.email}
+                    renderItem={({ item }) =>
+                        <ListItem
+                            onPress={() => navigation.navigate('Chat', { name: item.username, uid: item.userUID })}
+                            title={item.username}
+                            subTitle={item.email}
+                            online={item.online}
+                            image={item.avatarUrl}
+                        />
+                    }
+                />
+            </>
+        </ImageBackground>
     );
 }
 
 const styles = StyleSheet.create({
+    backgroundImage: {
+        flex: 1,
+        resizeMode: 'cover',
+        justifyContent: 'center',
+    },
     searchContainer: {
         backgroundColor: 'transparent',
         borderBottomColor: 'transparent',
         borderTopColor: 'transparent',
     },
     searchInputContainer: {
-        backgroundColor: '#e1e1e1',
+        backgroundColor: 'white',
         borderRadius: 30,
     },
 });

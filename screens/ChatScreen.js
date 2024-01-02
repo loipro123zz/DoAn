@@ -16,8 +16,6 @@ import {
 import { db } from '../firebaseConfig';
 import * as ImagePicker from 'expo-image-picker';
 import { createStackNavigator } from '@react-navigation/stack';
-
-// Import UserProfileScreen
 import UserProfileScreen from './UserProfileScreen';
 
 const Stack = createStackNavigator();
@@ -253,7 +251,7 @@ const styles = StyleSheet.create({
         fontSize: 50,
         color: 'white',
     },
-    
+
 });
 
 export default ChatScreen;
