@@ -1,4 +1,3 @@
-// ChatScreen.js
 import React, { useState, useCallback, useEffect } from 'react';
 import { StyleSheet, View, Image, TouchableOpacity, Text } from 'react-native';
 import { GiftedChat, InputToolbar, Composer, Bubble } from 'react-native-gifted-chat';
@@ -13,6 +12,7 @@ import {
     query,
     orderBy,
 } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db } from '../firebaseConfig';
 import * as ImagePicker from 'expo-image-picker';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -105,7 +105,14 @@ const ChatScreen = ({ route, navigation }) => {
 
         if (msg.image) {
             const imageUri = msg.image;
-            myMsg.image = imageUri;
+            const imageExtension = imageUri.split('.').pop();
+
+            const storage = getStorage();
+            const imageRef = ref(storage, `chat_images/${new Date().getTime()}.${imageExtension}`);
+            await uploadBytes(imageRef, await fetch(imageUri).then((response) => response.blob()));
+
+            const imageUrl = await getDownloadURL(imageRef);
+            myMsg.image = imageUrl;
         }
 
         setMessages((previousMessages) => GiftedChat.append(previousMessages, myMsg));
@@ -251,7 +258,6 @@ const styles = StyleSheet.create({
         fontSize: 50,
         color: 'white',
     },
-
 });
 
 export default ChatScreen;
