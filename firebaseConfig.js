@@ -19,6 +19,8 @@ const firebaseConfig = {
     measurementId: "G-FR4HBJ2LQ6"
 };
 
+
+
 // Cập nhật trạng thái online khi người dùng đăng nhập
 export const loginUser = async (userUID) => {
     await db.collection('users').doc(userUID).update({

@@ -5,7 +5,8 @@ import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import HomeScreen from './screens/HomeScreen';
 import ChatScreen from './screens/ChatScreen'
-
+import { YellowBox } from 'react-native';
+YellowBox.ignoreWarnings(['Possible Unhandled Promise Rejection']);
 const Stack = createStackNavigator();
 
 const App = () => {

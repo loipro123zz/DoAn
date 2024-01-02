@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, SafeAreaView, TouchableOpacity, Text } from 'react-native';
 import { Input, Button } from 'react-native-elements';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { authentication } from '../firebaseConfig';
 
 const RegisterScreen = ({ navigation }) => {
@@ -17,23 +17,42 @@ const RegisterScreen = ({ navigation }) => {
             const userUID = userCredentials.user.uid;
             const docRef = doc(getFirestore(), 'users', userUID);
 
-            await setDoc(docRef, {
-                avatarUrl: avatar ? avatar : 'https://thumbs.dreamstime.com/b/businessman-avatar-line-icon-vector-illustration-design-79327237.jpg',
-                username,
-                password,
-                userUID,
-                email
-            });
-            await updateProfile(user, {
-                photoURL: avatar ? avatar : 'https://thumbs.dreamstime.com/b/businessman-avatar-line-icon-vector-illustration-design-79327237.jpg',
-            });
+            // Kiểm tra xem tài liệu đã tồn tại hay không
+            const docSnap = await getDoc(docRef);
 
-            // Log để kiểm tra
-            console.log('Successful registration');
-            console.log('User photoURL:', user.photoURL);
-            alert('Successful registration');
+            if (docSnap.exists()) {
+                // Tài liệu đã tồn tại, thực hiện cập nhật
+                await setDoc(docRef, {
+                    avatarUrl: avatar ? avatar : 'https://thumbs.dreamstime.com/b/businessman-avatar-line-icon-vector-illustration-design-79327237.jpg',
+                    username,
+                    password,
+                    userUID,
+                    email
+                }, { merge: true }); // Sử dụng merge để cập nhật mà không ghi đè nội dung hiện tại
+                await updateProfile(userCredentials.user, {
+                    photoURL: avatar ? avatar : 'https://thumbs.dreamstime.com/b/businessman-avatar-line-icon-vector-illustration-design-79327237.jpg',
+                });
+                console.log('User profile updated successfully!');
+
+            } else {
+                // Tài liệu chưa tồn tại, tạo mới tài liệu
+                await setDoc(docRef, {
+                    avatarUrl: avatar ? avatar : 'https://thumbs.dreamstime.com/b/businessman-avatar-line-icon-vector-illustration-design-79327237.jpg',
+                    username,
+                    password,
+                    userUID,
+                    email,
+                    createdAt: serverTimestamp(), // Thêm trường createdAt để đảm bảo tài liệu tồn tại
+                });
+                await updateProfile(userCredentials.user, {
+                    photoURL: avatar ? avatar : 'https://thumbs.dreamstime.com/b/businessman-avatar-line-icon-vector-illustration-design-79327237.jpg',
+                });
+                console.log('New user profile created successfully!');
+
+            }
         } catch (error) {
-            alert('Invalid Email or Password')
+
+            alert('Invalid Email or Password');
         }
     };
 
